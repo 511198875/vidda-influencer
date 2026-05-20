@@ -164,6 +164,9 @@
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+        .influencer:active {
+            transform: scale(0.98);
+        }
         .influencer .name {
             font-weight: 600;
             color: #333;
@@ -439,9 +442,49 @@
             border-color: #667eea;
             color: white;
         }
+
+        /* 右键菜单 */
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 2000;
+            min-width: 120px;
+            overflow: hidden;
+        }
+        .context-menu.show {
+            display: block;
+        }
+        .context-menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .context-menu-item:hover {
+            background: #f5f5f5;
+        }
+        .context-menu-item.danger {
+            color: #f44336;
+        }
+        .context-menu-item.danger:hover {
+            background: #ffebee;
+        }
     </style>
 </head>
 <body>
+    <!-- 右键菜单 -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item danger" onclick="deleteFromContext()">
+            🗑️ 删除达人
+        </div>
+    </div>
+
     <div class="header">
         <h1>Vidda达人四象限分析</h1>
         <div class="subtitle">横向：带货数量 | 纵向：内容质量</div>
@@ -577,6 +620,7 @@
             { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, takeoffFee: 3974, fee: 42494, roi: 0.16 },
         ];
         let currentFilter = '全部';
+        let selectedIndex = -1;
         
         // 各平台评分参考标准
         // 所有平台带货分：ROI 5=5分, 20=10分，指数插值
@@ -812,9 +856,37 @@
                     <div class="platform">${inf.platform}</div>
                 `;
                 div.addEventListener('click', () => showModal(index));
+                // 右键点击
+                div.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    selectedIndex = index;
+                    showContextMenu(e.clientX, e.clientY);
+                });
                 container.appendChild(div);
             });
         }
+
+        function showContextMenu(x, y) {
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
+            menu.classList.add('show');
+        }
+
+        function hideContextMenu() {
+            document.getElementById('contextMenu').classList.remove('show');
+        }
+
+        function deleteFromContext() {
+            if (selectedIndex >= 0) {
+                deleteInfluencer(selectedIndex);
+                selectedIndex = -1;
+            }
+            hideContextMenu();
+        }
+
+        // 点击其他地方关闭右键菜单
+        document.addEventListener('click', hideContextMenu);
         
         function renderTags() {
             const container = document.getElementById('influencerTags');
