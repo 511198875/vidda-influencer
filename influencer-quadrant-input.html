@@ -511,28 +511,28 @@
                     <!-- Q1: 右上 - 明星达人 -->
                     <div class="quadrant q1">
                         <span class="quadrant-name">⭐ 明星达人</span>
-                        <div class="quadrant-desc">高质量 × 高带货</div>
+                        <div class="quadrant-desc">高ROI × 低播放</div>
                         <div class="influencer-blocks" id="q1"></div>
                     </div>
 
                     <!-- Q2: 左上 - 潜力达人 -->
                     <div class="quadrant q2">
                         <span class="quadrant-name">🌟 潜力达人</span>
-                        <div class="quadrant-desc">高质量 × 低带货</div>
+                        <div class="quadrant-desc">高ROI × 高播放</div>
                         <div class="influencer-blocks" id="q2"></div>
                     </div>
 
                     <!-- Q3: 左下 - 观察区 -->
                     <div class="quadrant q3">
                         <span class="quadrant-name">👁 观察区</span>
-                        <div class="quadrant-desc">低质量 × 低带货</div>
+                        <div class="quadrant-desc">低ROI × 低播放</div>
                         <div class="influencer-blocks" id="q3"></div>
                     </div>
 
-                    <!-- Q4: 右下 - 带货达人 -->
+                    <!-- Q4: 右下 - 待挖掘 -->
                     <div class="quadrant q4">
-                        <span class="quadrant-name">💰 带货达人</span>
-                        <div class="quadrant-desc">低质量 × 高带货</div>
+                        <span class="quadrant-name">💡 待挖掘</span>
+                        <div class="quadrant-desc">低ROI × 高播放</div>
                         <div class="influencer-blocks" id="q4"></div>
                     </div>
                 </div>
@@ -748,15 +748,15 @@
         }
         
         function getQuadrant(sales, quality) {
-            // 右上Q1: 高质量(>=5) + 高带货(>=5) 
-            // 左上Q2: 高质量(>=5) + 低带货(<5)
-            // 左下Q3: 低质量(<5) + 低带货(<5)
-            // 右下Q4: 低质量(<5) + 高带货(>=5)
+            // 右上Q1: 高带货(>=5) + 低质量(<5) = 明星达人（ROI高但内容一般）
+            // 左上Q2: 高带货(>=5) + 高质量(>=5) = 潜力达人（内容和ROI都好）
+            // 左下Q3: 低带货(<5) + 低质量(<5) = 观察区
+            // 右下Q4: 低带货(<5) + 高质量(>=5) = 待挖掘
             
-            if (quality >= 5 && sales >= 5) return 'q1'; // 明星
-            if (quality >= 5 && sales < 5) return 'q2'; // 潜力
+            if (sales >= 5 && quality < 5) return 'q1'; // 明星
+            if (sales >= 5 && quality >= 5) return 'q2'; // 潜力
             if (quality < 5 && sales < 5) return 'q3'; // 观察
-            return 'q4'; // 带货
+            return 'q4'; // 待挖掘
         }
         
         function renderQuadrants() {
