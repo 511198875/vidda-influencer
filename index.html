@@ -1052,9 +1052,11 @@
                 : 'ROI ≈ ' + (inf.sales * 1.5).toFixed(1);
             document.getElementById('modalSalesSub').textContent = salesGuide;
 
-            const qualityGuide = inf.gmv >= 3000000 ? 'GMV ≥ 300万'
-                : inf.gmv >= 1000000 ? 'GMV ≥ 100万'
-                : 'GMV < 100万';
+            const qualityGuide = inf.quality >= 9 ? '内容质量优秀'
+                : inf.quality >= 7 ? '内容质量良好'
+                : inf.quality >= 5 ? '内容质量中等'
+                : inf.quality >= 3 ? '内容质量一般'
+                : '内容质量较差';
             document.getElementById('modalQualitySub').textContent = qualityGuide;
 
             // 数据行
