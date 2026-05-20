@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidda达人四象限分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 20px 32px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .header .subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+        }
+        /* 输入表单 */
+        .input-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .input-panel h3 {
+            font-size: 16px;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #eee;
+        }
+        /* 四象限图 */
+        .chart-area {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .quadrant-grid {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            border: 3px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .quadrant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 50px 12px 12px;
+            min-height: 280px;
+        }
+        .quadrant-name {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: white;
+        }
+        .q1 .quadrant-name { top: 10px; right: 10px; background: #4caf50; }
+        .q2 .quadrant-name { top: 10px; left: 10px; background: #ff9800; }
+        .q3 .quadrant-name { bottom: 10px; left: 10px; background: #9e9e9e; }
+        .q4 .quadrant-name { bottom: 10px; right: 10px; background: #2196f3; }
+        
+        .quadrant-desc {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        /* 达人是方块 */
+        .influencer {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 70px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .influencer:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .influencer .name {
+            font-weight: 600;
+            color: #333;
+            font-size: 12px;
+        }
+        .influencer .platform {
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .influencer-blocks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        /* 象限背景 */
+        .q1 { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
+        .q2 { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
+        .q3 { background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%); }
+        .q4 { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
+        
+        /* 轴标签 */
+        .axis-x {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .axis-y {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            position: absolute;
+            left: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-wrapper {
+            position: relative;
+            padding-left: 50px;
+        }
+        
+        /* 已有达人列表 */
+        .influencer-list {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .influencer-list h4 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        .influencer-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .influencer-tag {
+            background: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .influencer-tag .delete {
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .influencer-tag .delete:hover {
+            color: #f44336;
+        }
+        .empty-state {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            padding: 20px;
+        }
+        
+        /* 平台颜色 */
+        .platform-douyin { background: #ffe0e8; color: #e91e63; }
+        .platform-bilibili { background: #e0f7fa; color: #00bcd4; }
+        .platform-xhs { background: #fce4ec; color: #e91e63; }
+        .platform-zhihu { background: #e3f2fd; color: #2196f3; }
+        
+        /* 评分参考说明 */
+        .scoring-guide {
+            margin-top: 16px;
+            padding: 14px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.8;
+        }
+        .scoring-guide .guide-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .scoring-guide .guide-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3px;
+            gap: 8px;
+        }
+        .scoring-guide .guide-label {
+            color: #888;
+            white-space: nowrap;
+            font-size: 11px;
+            min-width: 30px;
+        }
+        .scoring-guide .guide-value {
+            color: #444;
+            text-align: right;
+            font-size: 11px;
+        }
+        .scoring-guide .guide-sep {
+            border-top: 1px dashed #dde;
+            margin: 8px 0;
+        }
+        .guide-scroll {
+            max-height: 130px;
+            overflow-y: auto;
+            margin-bottom: 4px;
+        }
+        .guide-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .guide-scroll::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 2px;
+        }
+        .guide-highlight {
+            background: #fff3cd;
+            border-radius: 4px;
+            padding: 1px 4px;
+        }
+
+        /* 详情弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            width: 380px;
+            max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            width: 28px; height: 28px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background: #e0e0e0; }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .modal-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .modal-name { font-size: 18px; font-weight: 700; color: #1a1a2e; }
+        .modal-platform { font-size: 12px; color: #999; margin-top: 2px; }
+        .modal-scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .score-box {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        .score-box .label { font-size: 11px; color: #888; margin-bottom: 4px; }
+        .score-box .value { font-size: 24px; font-weight: 700; color: #667eea; }
+        .score-box .sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+        .modal-data {
+            border-top: 1px solid #eee;
+            padding-top: 16px;
+        }
+        .modal-data-title { font-size: 12px; color: #888; margin-bottom: 12px; font-weight: 600; }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+        }
+        .data-row:last-child { border-bottom: none; }
+        .data-row .key { color: #666; }
+        .data-row .val { font-weight: 600; color: #333; }
+        .data-row .val.highlight { color: #4caf50; }
+        .data-row .val.warning { color: #ff9800; }
+        .data-row .val.danger { color: #f44336; }
+        
+        /* 筛选按钮 */
+        .filter-section {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .filter-section h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            color: #666;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vidda达人四象限分析</h1>
+        <div class="subtitle">横向：带货数量 | 纵向：内容质量</div>
+    </div>
+
+    <div class="container">
+        <!-- 左侧输入面板 -->
+        <div class="input-panel">
+            <h3>➕ 添加达人</h3>
+            <div class="form-group">
+                <label>达人名称</label>
+                <input type="text" id="name" placeholder="输入达人名称">
+            </div>
+            <div class="form-group">
+                <label>所在平台</label>
+                <select id="platform">
+                    <option value="抖音">📱 抖音</option>
+                    <option value="B站">🎬 B站</option>
+                    <option value="小红书">📕 小红书</option>
+                    <option value="知乎">💬 知乎</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>带货数量 (1-10)</label>
+                    <input type="number" id="sales" min="1" max="10" value="5">
+                </div>
+                <div class="form-group">
+                    <label>内容质量 (1-10)</label>
+                    <input type="number" id="quality" min="1" max="10" value="5">
+                </div>
+            </div>
+            
+            <!-- 平台评分参考 -->
+            <div class="scoring-guide" id="scoringGuide">
+                <div class="guide-title">📊 评分参考标准</div>
+                <div id="guideContent">请先选择平台</div>
+            </div>
+            <button class="btn btn-primary" onclick="addInfluencer()">添加到象限</button>
+            
+            <!-- 已有达人 -->
+            <div class="influencer-list">
+                <h4>已添加的达人</h4>
+                <div class="influencer-tags" id="influencerTags">
+                    <div class="empty-state">暂无达人，请添加</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧四象限 -->
+        <div class="chart-area">
+            <!-- 筛选按钮 -->
+            <div class="filter-section">
+                <h4>🗂 按平台筛选</h4>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
+                    <button class="filter-btn" onclick="setFilter('抖音')">📱 抖音</button>
+                    <button class="filter-btn" onclick="setFilter('B站')">🎬 B站</button>
+                    <button class="filter-btn" onclick="setFilter('小红书')">📕 小红书</button>
+                    <button class="filter-btn" onclick="setFilter('知乎')">💬 知乎</button>
+                </div>
+            </div>
+            
+            <div class="chart-wrapper">
+                <div class="axis-y">内容质量 ↑</div>
+                <div class="quadrant-grid">
+                    <!-- Q1: 右上 - 明星达人 -->
+                    <div class="quadrant q1">
+                        <span class="quadrant-name">⭐ 明星达人</span>
+                        <div class="quadrant-desc">高质量 × 高带货</div>
+                        <div class="influencer-blocks" id="q1"></div>
+                    </div>
+
+                    <!-- Q2: 左上 - 潜力达人 -->
+                    <div class="quadrant q2">
+                        <span class="quadrant-name">🌟 潜力达人</span>
+                        <div class="quadrant-desc">高质量 × 低带货</div>
+                        <div class="influencer-blocks" id="q2"></div>
+                    </div>
+
+                    <!-- Q3: 左下 - 观察区 -->
+                    <div class="quadrant q3">
+                        <span class="quadrant-name">👁 观察区</span>
+                        <div class="quadrant-desc">低质量 × 低带货</div>
+                        <div class="influencer-blocks" id="q3"></div>
+                    </div>
+
+                    <!-- Q4: 右下 - 带货达人 -->
+                    <div class="quadrant q4">
+                        <span class="quadrant-name">💰 带货达人</span>
+                        <div class="quadrant-desc">低质量 × 高带货</div>
+                        <div class="influencer-blocks" id="q4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="axis-x">← 带货数量 →</div>
+        </div>
+    </div>
+
+    <script>
+        let influencers = [
+            // B站达人 - 数据来源：详细投流计划 sheet
+            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 1621166, fee: 81705, roi: 19.84, playCount: null },
+            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270055, fee: 93718, roi: 2.88, playCount: null },
+            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49692, fee: 33927, roi: 1.46, playCount: null },
+            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337407, fee: 64012, roi: 5.27, playCount: null },
+            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, fee: 230818, roi: 3.07, playCount: null },
+            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187879, fee: 40996, roi: 4.58, playCount: null },
+            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119496, fee: 73606, roi: 1.62, playCount: null },
+            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56929, fee: 31500, roi: 1.81, playCount: null },
+            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, fee: 50799, roi: 10.72, playCount: null },
+            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, fee: 50480, roi: 7.77, playCount: null },
+            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6682, fee: 42494, roi: 0.16, playCount: null },
+            { name: '电锯爷(618)', platform: 'B站', sales: 10, quality: 10, gmv: 739419, fee: 36014, roi: 20.53, playCount: null },
+        ];
+        let currentFilter = '全部';
+        
+        // 各平台评分参考标准
+        // 所有平台带货分：ROI 5=5分, 20=10分，指数插值
+        // 抖音内容质量：新增A3数 20万=5分,80万=10分
+        // B站内容质量：播放量 10万=5分,30万=10分
+        // 小红书/知乎内容质量：综合判断
+        
+        const scoringGuides = {
+            '抖音': {
+                sales: [
+                    { score: '1分', desc: 'ROI ≈ 1' },
+                    { score: '2分', desc: 'ROI ≈ 1.5' },
+                    { score: '3分', desc: 'ROI ≈ 2' },
+                    { score: '4分', desc: 'ROI ≈ 3.5' },
+                    { score: '5分', desc: 'ROI = 5' },
+                    { score: '6分', desc: 'ROI ≈ 7' },
+                    { score: '7分', desc: 'ROI ≈ 10' },
+                    { score: '8分', desc: 'ROI ≈ 14' },
+                    { score: '9分', desc: 'ROI ≈ 17' },
+                    { score: '10分', desc: 'ROI = 20' },
+                ],
+                quality: [
+                    { score: '1分', desc: '新增A3数 < 4万' },
+                    { score: '2分', desc: '新增A3数 4万+' },
+                    { score: '3分', desc: '新增A3数 8万+' },
+                    { score: '4分', desc: '新增A3数 12万+' },
+                    { score: '5分', desc: '新增A3数 20万+' },
+                    { score: '6分', desc: '新增A3数 32万+' },
+                    { score: '7分', desc: '新增A3数 44万+' },
+                    { score: '8分', desc: '新增A3数 56万+' },
+                    { score: '9分', desc: '新增A3数 68万+' },
+                    { score: '10分', desc: '新增A3数 80万+' },
+                ]
+            },
+            'B站': {
+                sales: [
+                    { score: '1分', desc: 'ROI ≈ 1' },
+                    { score: '2分', desc: 'ROI ≈ 1.5' },
+                    { score: '3分', desc: 'ROI ≈ 2' },
+                    { score: '4分', desc: 'ROI ≈ 3.5' },
+                    { score: '5分', desc: 'ROI = 5' },
+                    { score: '6分', desc: 'ROI ≈ 7' },
+                    { score: '7分', desc: 'ROI ≈ 10' },
+                    { score: '8分', desc: 'ROI ≈ 14' },
+                    { score: '9分', desc: 'ROI ≈ 17' },
+                    { score: '10分', desc: 'ROI = 20' },
+                ],
+                quality: [
+                    { score: '1分', desc: '播放量 < 2万' },
+                    { score: '2分', desc: '播放量 2万+' },
+                    { score: '3分', desc: '播放量 4万+' },
+                    { score: '4分', desc: '播放量 6万+（接近均值）' },
+                    { score: '5分', desc: '播放量 10万+' },
+                    { score: '6分', desc: '播放量 14万+' },
+                    { score: '7分', desc: '播放量 18万+' },
+                    { score: '8分', desc: '播放量 22万+' },
+                    { score: '9分', desc: '播放量 26万+' },
+                    { score: '10分', desc: '播放量 30万+' },
+                ]
+            },
+            '小红书': {
+                sales: [
+                    { score: '1分', desc: 'ROI ≈ 1' },
+                    { score: '2分', desc: 'ROI ≈ 1.5' },
+                    { score: '3分', desc: 'ROI ≈ 2' },
+                    { score: '4分', desc: 'ROI ≈ 3.5' },
+                    { score: '5分', desc: 'ROI = 5' },
+                    { score: '6分', desc: 'ROI ≈ 7' },
+                    { score: '7分', desc: 'ROI ≈ 10' },
+                    { score: '8分', desc: 'ROI ≈ 14' },
+                    { score: '9分', desc: 'ROI ≈ 17' },
+                    { score: '10分', desc: 'ROI = 20' },
+                ],
+                quality: [
+                    { score: '说明', desc: 'CPE、互动率、收藏量综合判断（暂无固定阈值）' },
+                ]
+            },
+            '知乎': {
+                sales: [
+                    { score: '1分', desc: 'ROI ≈ 1' },
+                    { score: '2分', desc: 'ROI ≈ 1.5' },
+                    { score: '3分', desc: 'ROI ≈ 2' },
+                    { score: '4分', desc: 'ROI ≈ 3.5' },
+                    { score: '5分', desc: 'ROI = 5' },
+                    { score: '6分', desc: 'ROI ≈ 7' },
+                    { score: '7分', desc: 'ROI ≈ 10' },
+                    { score: '8分', desc: 'ROI ≈ 14' },
+                    { score: '9分', desc: 'ROI ≈ 17' },
+                    { score: '10分', desc: 'ROI = 20' },
+                ],
+                quality: [
+                    { score: '说明', desc: '赞同数、收藏量、评论质量综合判断（暂无固定阈值）' },
+                ]
+            }
+        };
+        
+        function updateScoringGuide() {
+            const platform = document.getElementById('platform').value;
+            const guide = scoringGuides[platform];
+            if (!guide) return;
+            
+            let html = '';
+            
+            // 带货评分
+            html += `<div style="font-weight:600;color:#2196f3;margin-bottom:6px;font-size:11px;">💰 带货数量评分参考</div>`;
+            html += `<div class="guide-scroll">`;
+            guide.sales.forEach(item => {
+                const isKey = item.score === '5分' || item.score === '10分';
+                html += `<div class="guide-row">
+                    <span class="guide-label${isKey ? ' guide-highlight' : ''}">${item.score}</span>
+                    <span class="guide-value">${item.desc}</span>
+                </div>`;
+            });
+            html += `</div>`;
+            
+            html += `<div class="guide-sep"></div>`;
+            
+            // 内容质量
+            html += `<div style="font-weight:600;color:#4caf50;margin-bottom:6px;font-size:11px;">✨ 内容质量评分参考</div>`;
+            html += `<div class="guide-scroll">`;
+            guide.quality.forEach(item => {
+                const isKey = item.score === '5分' || item.score === '10分';
+                html += `<div class="guide-row">
+                    <span class="guide-label${isKey ? ' guide-highlight' : ''}">${item.score}</span>
+                    <span class="guide-value">${item.desc}</span>
+                </div>`;
+            });
+            html += `</div>`;
+            
+            document.getElementById('guideContent').innerHTML = html;
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateScoringGuide();
+            document.getElementById('platform').addEventListener('change', updateScoringGuide);
+            renderQuadrants();
+            renderTags();
+        });
+        
+        function addInfluencer() {
+            const name = document.getElementById('name').value.trim();
+            const platform = document.getElementById('platform').value;
+            const sales = parseInt(document.getElementById('sales').value);
+            const quality = parseInt(document.getElementById('quality').value);
+            
+            if (!name) {
+                alert('请输入达人名称');
+                return;
+            }
+            
+            const influencer = { name, platform, sales, quality };
+            influencers.push(influencer);
+            
+            // 清空输入
+            document.getElementById('name').value = '';
+            
+            // 更新显示
+            renderQuadrants();
+            renderTags();
+        }
+        
+        function deleteInfluencer(index) {
+            influencers.splice(index, 1);
+            renderQuadrants();
+            renderTags();
+        }
+        
+        function setFilter(platform) {
+            currentFilter = platform;
+            
+            // 更新按钮样式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(platform) || (platform === '全部' && btn.textContent === '全部')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 重新渲染
+            renderQuadrants();
+        }
+        
+        function getFilteredInfluencers() {
+            if (currentFilter === '全部') {
+                return influencers;
+            }
+            return influencers.filter(inf => inf.platform === currentFilter);
+        }
+        
+        function getQuadrant(sales, quality) {
+            // 右上Q1: 高质量(>=5) + 高带货(>=5) 
+            // 左上Q2: 高质量(>=5) + 低带货(<5)
+            // 左下Q3: 低质量(<5) + 低带货(<5)
+            // 右下Q4: 低质量(<5) + 高带货(>=5)
+            
+            if (quality >= 5 && sales >= 5) return 'q1'; // 明星
+            if (quality >= 5 && sales < 5) return 'q2'; // 潜力
+            if (quality < 5 && sales < 5) return 'q3'; // 观察
+            return 'q4'; // 带货
+        }
+        
+        function renderQuadrants() {
+            ['q1', 'q2', 'q3', 'q4'].forEach(q => {
+                document.getElementById(q).innerHTML = '';
+            });
+
+            const filtered = getFilteredInfluencers();
+
+            filtered.forEach((inf, index) => {
+                const quadrant = getQuadrant(inf.sales, inf.quality);
+                const container = document.getElementById(quadrant);
+
+                const div = document.createElement('div');
+                div.className = 'influencer';
+                div.innerHTML = `
+                    <div class="name">${inf.name}</div>
+                    <div class="platform">${inf.platform}</div>
+                `;
+                div.addEventListener('click', () => showModal(index));
+                container.appendChild(div);
+            });
+        }
+        
+        function renderTags() {
+            const container = document.getElementById('influencerTags');
+            
+            if (influencers.length === 0) {
+                container.innerHTML = '<div class="empty-state">暂无达人，请添加</div>';
+                return;
+            }
+            
+            container.innerHTML = influencers.map((inf, index) => `
+                <div class="influencer-tag">
+                    ${inf.name}
+                    <span class="delete" onclick="deleteInfluencer(${index})">×</span>
+                </div>
+            `).join('');
+        }
+
+        function showModal(index) {
+            const inf = influencers[index];
+            if (!inf) return;
+
+            // 头像取名字首字
+            document.getElementById('modalAvatar').textContent = inf.name.charAt(0);
+            document.getElementById('modalName').textContent = inf.name;
+            document.getElementById('modalPlatform').textContent = '📍 ' + inf.platform;
+            document.getElementById('modalSales').textContent = inf.sales + '分';
+            document.getElementById('modalQuality').textContent = inf.quality + '分';
+
+            // 分数说明
+            const salesGuide = inf.sales === 10 ? 'ROI = ' + inf.roi
+                : inf.sales === 5 ? 'ROI ≈ 5（达标）'
+                : 'ROI ≈ ' + (inf.sales * 1.5).toFixed(1);
+            document.getElementById('modalSalesSub').textContent = salesGuide;
+
+            const qualityGuide = inf.gmv >= 3000000 ? 'GMV ≥ 300万'
+                : inf.gmv >= 1000000 ? 'GMV ≥ 100万'
+                : 'GMV < 100万';
+            document.getElementById('modalQualitySub').textContent = qualityGuide;
+
+            // 数据行
+            const dataRows = [];
+            if (inf.gmv != null) {
+                const roiColor = inf.roi >= 5 ? 'highlight' : inf.roi >= 1 ? 'warning' : 'danger';
+                dataRows.push({ key: '成交GMV', val: '¥' + inf.gmv.toLocaleString(), cls: '' });
+                dataRows.push({ key: '总费用', val: '¥' + inf.fee.toLocaleString(), cls: '' });
+                dataRows.push({ key: 'ROI', val: inf.roi.toFixed(2), cls: roiColor });
+            }
+            if (inf.playCount != null) {
+                dataRows.push({ key: '播放量', val: inf.playCount.toLocaleString(), cls: '' });
+            }
+
+            document.getElementById('modalDataRows').innerHTML = dataRows.map(r => `
+                <div class="data-row">
+                    <span class="key">${r.key}</span>
+                    <span class="val ${r.cls}">${r.val}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('detailModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('show');
+        }
+    </script>
+
+    <!-- 达人详情弹窗 -->
+    <div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-header">
+                <div class="modal-avatar" id="modalAvatar">-</div>
+                <div>
+                    <div class="modal-name" id="modalName">-</div>
+                    <div class="modal-platform" id="modalPlatform">-</div>
+                </div>
+            </div>
+            <div class="modal-scores">
+                <div class="score-box">
+                    <div class="label">💰 带货分数</div>
+                    <div class="value" id="modalSales">-</div>
+                    <div class="sub" id="modalSalesSub">-</div>
+                </div>
+                <div class="score-box">
+                    <div class="label">✨ 内容质量分数</div>
+                    <div class="value" id="modalQuality">-</div>
+                    <div class="sub" id="modalQualitySub">-</div>
+                </div>
+            </div>
+            <div class="modal-data">
+                <div class="modal-data-title">📊 详细效果数据</div>
+                <div id="modalDataRows"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
