@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏电视选购指南</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0e1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    padding: 20px;
+  }
+
+  .card {
+    width: 480px;
+    background: linear-gradient(160deg, #0f1629 0%, #0d1220 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 220, 255, 0.15);
+    box-shadow: 0 0 60px rgba(0, 180, 255, 0.08), 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  /* ── 顶部 Banner ── */
+  .header {
+    background: linear-gradient(135deg, #0a1628 0%, #0e2040 50%, #0a1628 100%);
+    padding: 32px 28px 24px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0,220,255,0.1);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,220,255,0.12) 0%, transparent 70%);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,120,0,0.1) 0%, transparent 70%);
+  }
+  .tag {
+    display: inline-block;
+    background: rgba(0,220,255,0.12);
+    color: #00dcff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,220,255,0.3);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .title-main {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .title-main span {
+    color: #00dcff;
+  }
+  .title-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+  }
+  .deco-line {
+    margin-top: 18px;
+    height: 2px;
+    background: linear-gradient(90deg, #00dcff, #0066ff, transparent);
+    border-radius: 2px;
+    width: 80%;
+  }
+
+  /* ── 正文区 ── */
+  .body { padding: 0 28px 28px; }
+
+  /* 避坑区 */
+  .avoid-section {
+    margin-top: 22px;
+    background: rgba(255, 60, 60, 0.06);
+    border: 1px solid rgba(255, 60, 60, 0.2);
+    border-left: 3px solid #ff3c3c;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ff5555;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label::before {
+    content: '⚠';
+    font-size: 12px;
+  }
+  .avoid-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+  }
+  .avoid-item:last-child { margin-bottom: 0; }
+  .avoid-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ff8080;
+  }
+  .avoid-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 2px;
+    line-height: 1.5;
+  }
+
+  /* 指标区 */
+  .criteria-section {
+    margin-top: 22px;
+  }
+  .criteria-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #00dcff;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .criteria-label::before {
+    content: '✦';
+    font-size: 10px;
+  }
+
+  .criterion {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .criterion:last-child { border-bottom: none; }
+
+  .num {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #00dcff, #0066ff);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .criterion-content { flex: 1; }
+  .criterion-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .criterion-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(0,220,255,0.12);
+    color: #00dcff;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .criterion-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 3px;
+    line-height: 1.6;
+  }
+
+  /* 推荐区 */
+  .recommend-section {
+    margin-top: 22px;
+    background: linear-gradient(135deg, rgba(255,120,0,0.1) 0%, rgba(255,80,0,0.06) 100%);
+    border: 1px solid rgba(255,120,0,0.25);
+    border-left: 3px solid #ff7800;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .recommend-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ff9933;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .recommend-label::before { content: '★'; font-size: 11px; }
+  .product-name {
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .product-name span { color: #ffaa44; }
+  .spec-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .spec-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* 底部 */
+  .footer {
+    padding: 14px 28px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-tip {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+  }
+  .footer-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #00dcff;
+    opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- 顶部标题 -->
+  <div class="header">
+    <div class="tag">GAMING TV GUIDE</div>
+    <div class="title-main">游戏电视<span>怎么选</span>？</div>
+    <div class="title-sub">听句实在话，少走弯路</div>
+    <div class="deco-line"></div>
+  </div>
+
+  <div class="body">
+
+    <!-- 避坑 -->
+    <div class="avoid-section">
+      <div class="section-label">常见踩坑</div>
+      <div class="avoid-item">
+        <div class="avoid-title">假亮泛白</div>
+        <div class="avoid-desc">标称几千尼特，一开 HDR 亮场蒙雾，暗场泛灰——光源技术不行，光线乱散射</div>
+      </div>
+      <div class="avoid-item">
+        <div class="avoid-title">操作延迟</div>
+        <div class="avoid-desc">芯片算力不足，画质好则手柄慢半拍，流畅则画面糊成一片</div>
+      </div>
+    </div>
+
+    <!-- 五大指标 -->
+    <div class="criteria-section">
+      <div class="criteria-label">选购 5 大硬指标</div>
+
+      <div class="criterion">
+        <div class="num">1</div>
+        <div class="criterion-content">
+          <div class="criterion-title">背光分区 <span class="criterion-badge">≥ 3000 级</span></div>
+          <div class="criterion-desc">像素级控光，光晕消除，暗场黑得纯粹</div>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="num">2</div>
+        <div class="criterion-content">
+          <div class="criterion-title">峰值亮度 <span class="criterion-badge">≥ 7000 尼特</span></div>
+          <div class="criterion-desc">认持久高亮，别信瞬时值；配合高色域高色准才有意义</div>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="num">3</div>
+        <div class="criterion-content">
+          <div class="criterion-title">双芯系统 <span class="criterion-badge">算力 ×2</span></div>
+          <div class="criterion-desc">独立画质芯片 + 旗舰 SOC，算力翻倍，画质与流畅两不误</div>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="num">4</div>
+        <div class="criterion-content">
+          <div class="criterion-title">刷新率 <span class="criterion-badge">4K 144Hz+</span></div>
+          <div class="criterion-desc">原生 4K + 双模高刷 + 满血 48Gbps HDMI 2.1，支持 VRR / ALLM</div>
+        </div>
+      </div>
+
+      <div class="criterion">
+        <div class="num">5</div>
+        <div class="criterion-content">
+          <div class="criterion-title">内存 & 网络 <span class="criterion-badge">4+64GB 起</span></div>
+          <div class="criterion-desc">WiFi 7 + 千兆网口，低延迟联机不掉帧</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推荐 -->
+    <div class="recommend-section">
+      <div class="recommend-label">实测推荐</div>
+      <div class="product-name">Vidda <span>大玩家 G7</span></div>
+      <div class="spec-tags">
+        <span class="spec-tag">3264 分区</span>
+        <span class="spec-tag">7300 nits</span>
+        <span class="spec-tag">原生 4K 180Hz</span>
+        <span class="spec-tag">双芯协同</span>
+        <span class="spec-tag">真 HDMI 2.1</span>
+        <span class="spec-tag">BFI 插黑帧</span>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <div class="footer">
+    <span class="footer-tip">© 游戏电视选购参考 · 数据截至 2026</span>
+    <span class="footer-dot"></span>
+  </div>
+
+</div>
+</body>
+</html>

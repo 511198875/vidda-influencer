@@ -543,19 +543,18 @@
 
     <script>
         let influencers = [
-            // B站达人 - 数据来源：详细投流计划 sheet
-            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 1621166, fee: 81705, roi: 19.84, playCount: null },
-            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270055, fee: 93718, roi: 2.88, playCount: null },
-            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49692, fee: 33927, roi: 1.46, playCount: null },
-            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337407, fee: 64012, roi: 5.27, playCount: null },
-            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, fee: 230818, roi: 3.07, playCount: null },
-            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187879, fee: 40996, roi: 4.58, playCount: null },
-            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119496, fee: 73606, roi: 1.62, playCount: null },
-            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56929, fee: 31500, roi: 1.81, playCount: null },
-            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, fee: 50799, roi: 10.72, playCount: null },
-            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, fee: 50480, roi: 7.77, playCount: null },
-            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6682, fee: 42494, roi: 0.16, playCount: null },
-            { name: '电锯爷(618)', platform: 'B站', sales: 10, quality: 10, gmv: 739419, fee: 36014, roi: 20.53, playCount: null },
+            // B站达人 - 数据来源：详细投流计划 sheet，去重后保留最高ROI
+            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 739418, influencerFee: 32100, takeoffFee: 3913, fee: 36013, roi: 20.53 },
+            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, influencerFee: 42586, takeoffFee: 8213, fee: 50799, roi: 10.72 },
+            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, influencerFee: 37800, takeoffFee: 12679, fee: 50479, roi: 7.77 },
+            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337406, influencerFee: 53500, takeoffFee: 10512, fee: 64012, roi: 5.27 },
+            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270054, influencerFee: 83460, takeoffFee: 10257, fee: 93717, roi: 2.88 },
+            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, influencerFee: 210000, takeoffFee: 20818, fee: 230818, roi: 3.07 },
+            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187878, influencerFee: 31500, takeoffFee: 9495, fee: 40995, roi: 4.58 },
+            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119495, influencerFee: 69550, takeoffFee: 4055, fee: 73605, roi: 1.62 },
+            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56928, influencerFee: 31500, takeoffFee: 0, fee: 31500, roi: 1.81 },
+            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49691, influencerFee: 28890, takeoffFee: 5036, fee: 33926, roi: 1.46 },
+            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, takeoffFee: 3974, fee: 42494, roi: 0.16 },
         ];
         let currentFilter = '全部';
         
@@ -825,6 +824,12 @@
             if (inf.gmv != null) {
                 const roiColor = inf.roi >= 5 ? 'highlight' : inf.roi >= 1 ? 'warning' : 'danger';
                 dataRows.push({ key: '成交GMV', val: '¥' + inf.gmv.toLocaleString(), cls: '' });
+                if (inf.influencerFee != null) {
+                    dataRows.push({ key: '达人费用', val: '¥' + inf.influencerFee.toLocaleString(), cls: '' });
+                }
+                if (inf.takeoffFee != null) {
+                    dataRows.push({ key: '起飞费用', val: '¥' + inf.takeoffFee.toLocaleString(), cls: '' });
+                }
                 dataRows.push({ key: '总费用', val: '¥' + inf.fee.toLocaleString(), cls: '' });
                 dataRows.push({ key: 'ROI', val: inf.roi.toFixed(2), cls: roiColor });
             }
