@@ -177,6 +177,15 @@
             color: #999;
             margin-top: 2px;
         }
+        /* 合作状态 */
+        .influencer.cooperated {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #2196F3;
+        }
+        .influencer.not-cooperated {
+            background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
+            border: 2px solid #fdd835;
+        }
         .influencer-blocks {
             display: flex;
             flex-wrap: wrap;
@@ -475,6 +484,60 @@
         .context-menu-item.danger:hover {
             background: #ffebee;
         }
+
+        /* 合作开关样式 */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ddd;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        .toggle input:checked + .toggle-slider {
+            background-color: #2196F3;
+        }
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+        .toggle-label {
+            font-size: 13px;
+            color: #999;
+        }
+        .toggle-label.active {
+            color: #2196F3;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -506,6 +569,16 @@
                     <option value="小红书">📕 小红书</option>
                     <option value="知乎">💬 知乎</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label>是否合作</label>
+                <div class="toggle-container">
+                    <label class="toggle">
+                        <input type="checkbox" id="cooperated">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="cooperatedLabel">未合作</span>
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -607,17 +680,17 @@
     <script>
         let influencers = [
             // B站达人 - 数据来源：详细投流计划 sheet，去重后保留最高ROI
-            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 739418, influencerFee: 32100, touLiuFee: 3913, fee: 36013, roi: 20.53 },
-            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, influencerFee: 42586, touLiuFee: 8213, fee: 50799, roi: 10.72 },
-            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, influencerFee: 37800, touLiuFee: 12679, fee: 50479, roi: 7.77 },
-            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337406, influencerFee: 53500, touLiuFee: 10512, fee: 64012, roi: 5.27 },
-            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270054, influencerFee: 83460, touLiuFee: 10257, fee: 93717, roi: 2.88 },
-            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, influencerFee: 210000, touLiuFee: 20818, fee: 230818, roi: 3.07 },
-            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187878, influencerFee: 31500, touLiuFee: 9495, fee: 40995, roi: 4.58 },
-            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119495, influencerFee: 69550, touLiuFee: 4055, fee: 73605, roi: 1.62 },
-            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56928, influencerFee: 31500, touLiuFee: 0, fee: 31500, roi: 1.81 },
-            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49691, influencerFee: 28890, touLiuFee: 5036, fee: 33926, roi: 1.46 },
-            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, touLiuFee: 3974, fee: 42494, roi: 0.16 },
+            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 739418, influencerFee: 32100, touLiuFee: 3913, fee: 36013, roi: 20.53, cooperated: true },
+            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, influencerFee: 42586, touLiuFee: 8213, fee: 50799, roi: 10.72, cooperated: true },
+            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, influencerFee: 37800, touLiuFee: 12679, fee: 50479, roi: 7.77, cooperated: true },
+            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337406, influencerFee: 53500, touLiuFee: 10512, fee: 64012, roi: 5.27, cooperated: true },
+            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270054, influencerFee: 83460, touLiuFee: 10257, fee: 93717, roi: 2.88, cooperated: true },
+            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, influencerFee: 210000, touLiuFee: 20818, fee: 230818, roi: 3.07, cooperated: false },
+            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187878, influencerFee: 31500, touLiuFee: 9495, fee: 40995, roi: 4.58, cooperated: true },
+            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119495, influencerFee: 69550, touLiuFee: 4055, fee: 73605, roi: 1.62, cooperated: false },
+            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56928, influencerFee: 31500, touLiuFee: 0, fee: 31500, roi: 1.81, cooperated: false },
+            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49691, influencerFee: 28890, touLiuFee: 5036, fee: 33926, roi: 1.46, cooperated: false },
+            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, touLiuFee: 3974, fee: 42494, roi: 0.16, cooperated: false },
         ];
         let currentFilter = '全部';
         let selectedIndex = -1;
@@ -757,6 +830,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateScoringGuide();
             document.getElementById('platform').addEventListener('change', updateScoringGuide);
+            
+            // 合作开关事件
+            const cooperatedToggle = document.getElementById('cooperated');
+            const cooperatedLabel = document.getElementById('cooperatedLabel');
+            cooperatedToggle.addEventListener('change', () => {
+                if (cooperatedToggle.checked) {
+                    cooperatedLabel.textContent = '已合作';
+                    cooperatedLabel.classList.add('active');
+                } else {
+                    cooperatedLabel.textContent = '未合作';
+                    cooperatedLabel.classList.remove('active');
+                }
+            });
+            
             renderQuadrants();
             renderTags();
         });
@@ -783,7 +870,10 @@
                 roi = Math.round(roi * 100) / 100;
             }
             
-            const influencer = { name, platform, sales, quality, gmv, fee, influencerFee, touLiuFee, roi };
+            // 获取合作状态
+            const cooperated = document.getElementById('cooperated').checked;
+            
+            const influencer = { name, platform, sales, quality, gmv, fee, influencerFee, touLiuFee, roi, cooperated };
             influencers.push(influencer);
             
             // 清空输入
@@ -792,6 +882,9 @@
             document.getElementById('fee').value = '';
             document.getElementById('influencerFee').value = '';
             document.getElementById('touLiuFee').value = '';
+            document.getElementById('cooperated').checked = false;
+            document.getElementById('cooperatedLabel').textContent = '未合作';
+            document.getElementById('cooperatedLabel').classList.remove('active');
             
             // 更新显示
             renderQuadrants();
@@ -848,9 +941,10 @@
             filtered.forEach((inf, index) => {
                 const quadrant = getQuadrant(inf.sales, inf.quality);
                 const container = document.getElementById(quadrant);
+                const coopClass = inf.cooperated ? 'cooperated' : 'not-cooperated';
 
                 const div = document.createElement('div');
-                div.className = 'influencer';
+                div.className = `influencer ${coopClass}`;
                 div.innerHTML = `
                     <div class="name">${inf.name}</div>
                     <div class="platform">${inf.platform}</div>
@@ -943,6 +1037,9 @@
             if (inf.playCount != null) {
                 dataRows.push({ key: '播放量', val: inf.playCount.toLocaleString(), cls: '' });
             }
+            // 合作状态
+            const coopStatus = inf.cooperated ? '✅ 已合作' : '❌ 未合作';
+            dataRows.push({ key: '合作状态', val: coopStatus, cls: inf.cooperated ? 'highlight' : 'warning' });
 
             document.getElementById('modalDataRows').innerHTML = dataRows.map(r => `
                 <div class="data-row">
