@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidda达人管理看板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-card .label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .stat-card .sub {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .stat-card.douyin { border-left: 4px solid #fe2c55; }
+        .stat-card.bilibili { border-left: 4px solid #00a1d6; }
+        .stat-card.xhs { border-left: 4px solid #ff2442; }
+        .stat-card.zhihu { border-left: 4px solid #0066ff; }
+        .platform-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .platform-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .platform-icon.douyin { background: #fe2c55; }
+        .platform-icon.bilibili { background: #00a1d6; }
+        .platform-icon.xhs { background: #ff2442; }
+        .platform-icon.zhihu { background: #0066ff; }
+        .platform-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .platform-count {
+            margin-left: auto;
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #fafafa;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        tr:hover {
+            background: #fafafa;
+        }
+        .influencer-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .name {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .id {
+            font-size: 12px;
+            color: #999;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge.头部 { background: #fff3e0; color: #ff9800; }
+        .badge.腰部 { background: #e3f2fd; color: #2196f3; }
+        .badge.KOC { background: #e8f5e9; color: #4caf50; }
+        .badge.素人 { background: #f5f5f5; color: #666; }
+        .metrics {
+            display: flex;
+            gap: 20px;
+        }
+        .metric {
+            text-align: center;
+        }
+        .metric .num {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a2e;
+        }
+        .metric .label {
+            font-size: 11px;
+            color: #999;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status.执行中 { background: #e8f5e9; color: #4caf50; }
+        .status.待发布 { background: #fff3e0; color: #ff9800; }
+        .status.待确认 { background: #e3f2fd; color: #2196f3; }
+        .status.已完结 { background: #f5f5f5; color: #666; }
+        .action {
+            color: #2196f3;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .action:hover { text-decoration: underline; }
+        .tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 2px;
+            color: #666;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Vidda达人管理看板</h1>
+            <div class="date">更新时间：2026-05-19</div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;">+ 新增达人</button>
+            <button style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;">导出数据</button>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card douyin">
+            <div class="label">抖音达人</div>
+            <div class="value">12</div>
+            <div class="sub">本月新增 3 | 合作中 8</div>
+        </div>
+        <div class="stat-card bilibili">
+            <div class="label">B站达人</div>
+            <div class="value">8</div>
+            <div class="sub">本月新增 1 | 合作中 5</div>
+        </div>
+        <div class="stat-card xhs">
+            <div class="label">小红书达人</div>
+            <div class="value">15</div>
+            <div class="sub">本月新增 4 | 合作中 10</div>
+        </div>
+        <div class="stat-card zhihu">
+            <div class="label">知乎达人</div>
+            <div class="value">6</div>
+            <div class="sub">本月新增 0 | 合作中 3</div>
+        </div>
+    </div>
+
+    <div class="platform-section">
+        <div class="platform-header">
+            <div class="platform-icon douyin">抖</div>
+            <div class="platform-name">抖音</div>
+            <div class="platform-count">12位达人</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>达人信息</th>
+                    <th>类型</th>
+                    <th>粉丝量</th>
+                    <th>数据表现</th>
+                    <th>合作状态</th>
+                    <th>擅长领域</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">科技</div>
+                            <div>
+                                <div class="name">科技小王子</div>
+                                <div class="id">@keji_tv</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge 头部">头部</span></td>
+                    <td>328万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">58万</div><div class="label">平均播放</div></div>
+                            <div class="metric"><div class="num">3.2%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 执行中">执行中</span></td>
+                    <td><span class="tag">电视评测</span><span class="tag">科技</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">家居</div>
+                            <div>
+                                <div class="name">家居生活家</div>
+                                <div class="id">@jiaju_life</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge 腰部">腰部</span></td>
+                    <td>45万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">12万</div><div class="label">平均播放</div></div>
+                            <div class="metric"><div class="num">4.8%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 待发布">待发布</span></td>
+                    <td><span class="tag">家居</span><span class="tag">生活</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">数码</div>
+                            <div>
+                                <div class="name">数码爱好者</div>
+                                <div class="id">@digital_fan</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge KOC">KOC</span></td>
+                    <td>8.5万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">3.5万</div><div class="label">平均播放</div></div>
+                            <div class="metric"><div class="num">6.2%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 已完结">已完结</span></td>
+                    <td><span class="tag">数码</span><span class="tag">开箱</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="summary-row">
+            <span>抖音合计：12位达人 | 粉丝总量 1250万+</span>
+            <span style="color: #4caf50;">↑ 本月播放量增长 23%</span>
+        </div>
+    </div>
+
+    <div class="platform-section">
+        <div class="platform-header">
+            <div class="platform-icon bilibili">B</div>
+            <div class="platform-name">B站</div>
+            <div class="platform-count">8位达人</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>达人信息</th>
+                    <th>类型</th>
+                    <th>粉丝量</th>
+                    <th>数据表现</th>
+                    <th>合作状态</th>
+                    <th>擅长领域</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">评测</div>
+                            <div>
+                                <div class="name">产品测评师</div>
+                                <div class="id">@product_test</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge 头部">头部</span></td>
+                    <td>186万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">45万</div><div class="label">平均播放</div></div>
+                            <div class="metric"><div class="num">5.1%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 执行中">执行中</span></td>
+                    <td><span class="tag">深度评测</span><span class="tag">横评</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">生活</div>
+                            <div>
+                                <div class="name">UP主小生活</div>
+                                <div class="id">@life_up</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge 腰部">腰部</span></td>
+                    <td>32万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">8万</div><div class="label">平均播放</div></div>
+                            <div class="metric"><div class="num">4.3%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 待确认">待确认</span></td>
+                    <td><span class="tag">vlog</span><span class="tag">生活</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="summary-row">
+            <span>B站合计：8位达人 | 粉丝总量 520万+</span>
+            <span style="color: #4caf50;">↑ 本月播放量增长 18%</span>
+        </div>
+    </div>
+
+    <div class="platform-section">
+        <div class="platform-header">
+            <div class="platform-icon xhs">红</div>
+            <div class="platform-name">小红书</div>
+            <div class="platform-count">15位达人</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>达人信息</th>
+                    <th>类型</th>
+                    <th>粉丝量</th>
+                    <th>数据表现</th>
+                    <th>合作状态</th>
+                    <th>擅长领域</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);">种草</div>
+                            <div>
+                                <div class="name">种草小能手</div>
+                                <div class="id">@zhongcao</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge 腰部">腰部</span></td>
+                    <td>28万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">1.2万</div><div class="label">平均互动</div></div>
+                            <div class="metric"><div class="num">8.5%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 执行中">执行中</span></td>
+                    <td><span class="tag">种草</span><span class="tag">家居</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="influencer-cell">
+                            <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #fg5576c 100%);">穿搭</div>
+                            <div>
+                                <div class="name">品质生活家</div>
+                                <div class="id">@quality_life</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge KOC">KOC</span></td>
+                    <td>5.2万</td>
+                    <td>
+                        <div class="metrics">
+                            <div class="metric"><div class="num">3500</div><div class="label">平均互动</div></div>
+                            <div class="metric"><div class="num">9.2%</div><div class="label">互动率</div></div>
+                        </div>
+                    </td>
+                    <td><span class="status 待发布">待发布</span></td>
+                    <td><span class="tag">品质</span><span class="tag">生活</span></td>
+                    <td><span class="action">查看详情</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="summary-row">
+            <span>小红书合计：15位达人 | 粉丝总量 280万+</span>
+            <span style="color: #4caf50;">↑ 本月互动量增长 35%</span>
+        </div>
+    </div>
+
+</body>
+</html>
