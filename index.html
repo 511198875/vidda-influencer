@@ -533,8 +533,8 @@
                     <input type="number" id="influencerFee" placeholder="如：30000">
                 </div>
                 <div class="form-group">
-                    <label>起飞费用 (元)</label>
-                    <input type="number" id="takeoffFee" placeholder="如：5000">
+                    <label>投流费用 (元)</label>
+                    <input type="number" id="touLiuFee" placeholder="如：5000">
                 </div>
             </div>
             
@@ -607,17 +607,17 @@
     <script>
         let influencers = [
             // B站达人 - 数据来源：详细投流计划 sheet，去重后保留最高ROI
-            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 739418, influencerFee: 32100, takeoffFee: 3913, fee: 36013, roi: 20.53 },
-            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, influencerFee: 42586, takeoffFee: 8213, fee: 50799, roi: 10.72 },
-            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, influencerFee: 37800, takeoffFee: 12679, fee: 50479, roi: 7.77 },
-            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337406, influencerFee: 53500, takeoffFee: 10512, fee: 64012, roi: 5.27 },
-            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270054, influencerFee: 83460, takeoffFee: 10257, fee: 93717, roi: 2.88 },
-            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, influencerFee: 210000, takeoffFee: 20818, fee: 230818, roi: 3.07 },
-            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187878, influencerFee: 31500, takeoffFee: 9495, fee: 40995, roi: 4.58 },
-            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119495, influencerFee: 69550, takeoffFee: 4055, fee: 73605, roi: 1.62 },
-            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56928, influencerFee: 31500, takeoffFee: 0, fee: 31500, roi: 1.81 },
-            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49691, influencerFee: 28890, takeoffFee: 5036, fee: 33926, roi: 1.46 },
-            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, takeoffFee: 3974, fee: 42494, roi: 0.16 },
+            { name: '电锯爷', platform: 'B站', sales: 10, quality: 10, gmv: 739418, influencerFee: 32100, touLiuFee: 3913, fee: 36013, roi: 20.53 },
+            { name: '白电评', platform: 'B站', sales: 7, quality: 10, gmv: 544348, influencerFee: 42586, touLiuFee: 8213, fee: 50799, roi: 10.72 },
+            { name: '無界科技', platform: 'B站', sales: 6, quality: 10, gmv: 392216, influencerFee: 37800, touLiuFee: 12679, fee: 50479, roi: 7.77 },
+            { name: '逆狱', platform: 'B站', sales: 5, quality: 10, gmv: 337406, influencerFee: 53500, touLiuFee: 10512, fee: 64012, roi: 5.27 },
+            { name: '好屏如潮', platform: 'B站', sales: 3, quality: 9, gmv: 270054, influencerFee: 83460, touLiuFee: 10257, fee: 93717, roi: 2.88 },
+            { name: '搞机所', platform: 'B站', sales: 3, quality: 10, gmv: 709129, influencerFee: 210000, touLiuFee: 20818, fee: 230818, roi: 3.07 },
+            { name: '机不宇', platform: 'B站', sales: 5, quality: 7, gmv: 187878, influencerFee: 31500, touLiuFee: 9495, fee: 40995, roi: 4.58 },
+            { name: '野生装机宅', platform: 'B站', sales: 2, quality: 6, gmv: 119495, influencerFee: 69550, touLiuFee: 4055, fee: 73605, roi: 1.62 },
+            { name: '阿朱学姐', platform: 'B站', sales: 2, quality: 3, gmv: 56928, influencerFee: 31500, touLiuFee: 0, fee: 31500, roi: 1.81 },
+            { name: '科技盲区', platform: 'B站', sales: 2, quality: 3, gmv: 49691, influencerFee: 28890, touLiuFee: 5036, fee: 33926, roi: 1.46 },
+            { name: '暴躁评测师小吴', platform: 'B站', sales: 1, quality: 1, gmv: 6681, influencerFee: 38520, touLiuFee: 3974, fee: 42494, roi: 0.16 },
         ];
         let currentFilter = '全部';
         let selectedIndex = -1;
@@ -769,7 +769,7 @@
             const gmv = parseFloat(document.getElementById('gmv').value) || null;
             const fee = parseFloat(document.getElementById('fee').value) || null;
             const influencerFee = parseFloat(document.getElementById('influencerFee').value) || null;
-            const takeoffFee = parseFloat(document.getElementById('takeoffFee').value) || null;
+            const touLiuFee = parseFloat(document.getElementById('touLiuFee').value) || null;
             
             if (!name) {
                 alert('请输入达人名称');
@@ -783,7 +783,7 @@
                 roi = Math.round(roi * 100) / 100;
             }
             
-            const influencer = { name, platform, sales, quality, gmv, fee, influencerFee, takeoffFee, roi };
+            const influencer = { name, platform, sales, quality, gmv, fee, influencerFee, touLiuFee, roi };
             influencers.push(influencer);
             
             // 清空输入
@@ -791,7 +791,7 @@
             document.getElementById('gmv').value = '';
             document.getElementById('fee').value = '';
             document.getElementById('influencerFee').value = '';
-            document.getElementById('takeoffFee').value = '';
+            document.getElementById('touLiuFee').value = '';
             
             // 更新显示
             renderQuadrants();
@@ -934,8 +934,8 @@
                 if (inf.influencerFee != null) {
                     dataRows.push({ key: '达人费用', val: '¥' + inf.influencerFee.toLocaleString(), cls: '' });
                 }
-                if (inf.takeoffFee != null) {
-                    dataRows.push({ key: '起飞费用', val: '¥' + inf.takeoffFee.toLocaleString(), cls: '' });
+                if (inf.touLiuFee != null) {
+                    dataRows.push({ key: '投流费用', val: '¥' + inf.touLiuFee.toLocaleString(), cls: '' });
                 }
                 dataRows.push({ key: '总费用', val: '¥' + inf.fee.toLocaleString(), cls: '' });
                 dataRows.push({ key: 'ROI', val: inf.roi.toFixed(2), cls: roiColor });
