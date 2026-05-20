@@ -474,6 +474,26 @@
                     <input type="number" id="quality" min="1" max="10" value="5">
                 </div>
             </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>成交GMV (元)</label>
+                    <input type="number" id="gmv" placeholder="如：500000">
+                </div>
+                <div class="form-group">
+                    <label>总费用 (元)</label>
+                    <input type="number" id="fee" placeholder="达人费+起飞费">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>达人费用 (元)</label>
+                    <input type="number" id="influencerFee" placeholder="如：30000">
+                </div>
+                <div class="form-group">
+                    <label>起飞费用 (元)</label>
+                    <input type="number" id="takeoffFee" placeholder="如：5000">
+                </div>
+            </div>
             
             <!-- 平台评分参考 -->
             <div class="scoring-guide" id="scoringGuide">
@@ -702,17 +722,32 @@
             const platform = document.getElementById('platform').value;
             const sales = parseInt(document.getElementById('sales').value);
             const quality = parseInt(document.getElementById('quality').value);
+            const gmv = parseFloat(document.getElementById('gmv').value) || null;
+            const fee = parseFloat(document.getElementById('fee').value) || null;
+            const influencerFee = parseFloat(document.getElementById('influencerFee').value) || null;
+            const takeoffFee = parseFloat(document.getElementById('takeoffFee').value) || null;
             
             if (!name) {
                 alert('请输入达人名称');
                 return;
             }
             
-            const influencer = { name, platform, sales, quality };
+            // 计算ROI
+            let roi = null;
+            if (gmv && fee && fee > 0) {
+                roi = gmv / fee;
+                roi = Math.round(roi * 100) / 100;
+            }
+            
+            const influencer = { name, platform, sales, quality, gmv, fee, influencerFee, takeoffFee, roi };
             influencers.push(influencer);
             
             // 清空输入
             document.getElementById('name').value = '';
+            document.getElementById('gmv').value = '';
+            document.getElementById('fee').value = '';
+            document.getElementById('influencerFee').value = '';
+            document.getElementById('takeoffFee').value = '';
             
             // 更新显示
             renderQuadrants();
